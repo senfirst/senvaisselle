@@ -1,0 +1,8 @@
+{
+  "name": "Sen Vaisselle",
+  "description": "Boutique en ligne professionnelle et moderne spécialisée dans la vaisselle, les ustensiles de cuisine et les accessoires de table.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
