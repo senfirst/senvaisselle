@@ -36,6 +36,7 @@ export function requireAuth(callback) {
 }
 
 /** Sur la page de connexion : si déjà connecté, redirige vers le tableau de bord */
+
 export function redirectIfAuthenticated() {
   onAuthStateChanged(auth, (user) => {
     if (user) window.location.href = "dashboard.html";
