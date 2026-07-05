@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produit | Admin Sen Vaisselle</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="admin-shell">
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="brand"><span class="plate-mark"></span> Sen Vaisselle</div>
+    <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-gauge"></i> Tableau de bord</a>
+    <a href="produits.html" class="nav-item active"><i class="fa-solid fa-box"></i> Produits</a>
+    <a href="../index.html" class="nav-item" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Voir la boutique</a>
+    <a href="#" id="logoutLink" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</a>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <button class="btn d-lg-none mb-2" id="sidebarToggle" style="border:1px solid var(--line);border-radius:10px;">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <h1 class="font-display" style="font-size:1.7rem;color:var(--navy);margin:0;" id="formTitle">Ajouter un produit</h1>
+        <p class="text-muted small mb-0">Les champs marqués * sont obligatoires.</p>
+      </div>
+      <a href="produits.html" class="btn-sv-outline"><i class="fa-solid fa-arrow-left me-1"></i> Retour à la liste</a>
+    </div>
+
+    <form id="productForm">
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="admin-card mb-4">
+            <h2 class="h6 mb-3">Informations générales</h2>
+            <div class="row g-3">
+              <div class="col-md-8">
+                <label class="form-label small fw-semibold">Nom du produit *</label>
+                <input type="text" id="name" class="form-control form-control-sv" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Catégorie *</label>
+                <select id="categoryId" class="form-select form-select-sv" required></select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Référence *</label>
+                <div class="input-group">
+                  <input type="text" id="reference" class="form-control form-control-sv" required>
+                  <button type="button" id="genRefBtn" class="btn btn-sv-outline" style="border-radius:0 var(--radius-sm) var(--radius-sm) 0;" title="Générer automatiquement"><i class="fa-solid fa-shuffle"></i></button>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Couleur (optionnel)</label>
+                <div class="d-flex gap-2 align-items-center">
+                  <input type="color" id="colorPicker" value="#0A3D91" style="width:44px;height:44px;border:1.5px solid var(--line);border-radius:var(--radius-sm);padding:2px;">
+                  <input type="text" id="color" class="form-control form-control-sv" placeholder="Ex : Bleu marine ou #0A3D91">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-card mb-4">
+            <h2 class="h6 mb-3">Prix &amp; stock</h2>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Prix de vente (FCFA) *</label>
+                <input type="number" id="price" min="0" step="1" class="form-control form-control-sv" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Ancien prix (optionnel)</label>
+                <input type="number" id="oldPrice" min="0" step="1" class="form-control form-control-sv" placeholder="Pour afficher une remise">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Stock disponible *</label>
+                <input type="number" id="stock" min="0" step="1" class="form-control form-control-sv" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <h2 class="h6 mb-3">Images du produit</h2>
+            <p class="text-muted small">Collez l'URL d'une image hébergée en ligne (ex: lien direct vers une photo). La première image ajoutée devient l'image principale, cliquez sur une vignette pour changer.</p>
+            <div class="input-group mb-3">
+              <input type="url" id="imageUrlInput" class="form-control form-control-sv" placeholder="https://exemple.com/mon-image.jpg">
+              <button type="button" id="addImageBtn" class="btn-sv-primary" style="border-radius:0 999px 999px 0;">Ajouter</button>
+            </div>
+            <div class="row g-3" id="imagesGrid"></div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="admin-card mb-4">
+            <h2 class="h6 mb-3">Visibilité</h2>
+            <div class="form-check form-switch mb-2">
+              <input class="form-check-input" type="checkbox" id="availability" checked>
+              <label class="form-check-label small" for="availability">Disponible à la vente</label>
+            </div>
+            <div class="form-check form-switch mb-2">
+              <input class="form-check-input" type="checkbox" id="featured">
+              <label class="form-check-label small" for="featured">Produit vedette (page d'accueil)</label>
+            </div>
+            <div class="form-check form-switch mb-2">
+              <input class="form-check-input" type="checkbox" id="isNew">
+              <label class="form-check-label small" for="isNew">Marquer comme nouveauté</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="promo">
+              <label class="form-check-label small" for="promo">En promotion</label>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div id="formError" class="text-danger small mb-3" style="display:none;"></div>
+            <button type="submit" id="submitBtn" class="btn-sv-primary w-100 justify-content-center d-flex align-items-center gap-2 mb-2">
+              <span id="submitBtnText">Enregistrer le produit</span>
+              <i class="fa-solid fa-spinner fa-spin" id="submitSpinner" style="display:none;"></i>
+            </button>
+            <a href="produits.html" class="btn-sv-outline w-100 text-center d-block">Annuler</a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script type="module">
+import { requireAuth, logoutAdmin } from "../js/admin-auth.js";
+import { createProduct, updateProduct, fetchProductByIdAdmin } from "../js/admin-products.js";
+import { fetchCategoriesSync } from "../js/categories.js";
+import { generateReference, escapeText, toast, getQueryParam } from "../js/utils.js";
+
+document.getElementById("logoutLink").addEventListener("click", (e) => { e.preventDefault(); logoutAdmin(); });
+document.getElementById("sidebarToggle")?.addEventListener("click", () => {
+  document.getElementById("adminSidebar").classList.toggle("open");
+});
+
+const categories = fetchCategoriesSync();
+const categorySelect = document.getElementById("categoryId");
+categorySelect.innerHTML = '<option value="">Choisir une catégorie</option>' +
+  categories.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+
+const editId = getQueryParam("id");
+let images = []; // [{ url, isMain }]
+
+document.getElementById("genRefBtn").addEventListener("click", () => {
+  const catName = categorySelect.options[categorySelect.selectedIndex]?.text || "";
+  document.getElementById("reference").value = generateReference(catName);
+});
+
+document.getElementById("colorPicker").addEventListener("input", (e) => {
+  document.getElementById("color").value = e.target.value;
+});
+
+document.getElementById("addImageBtn").addEventListener("click", () => {
+  const input = document.getElementById("imageUrlInput");
+  const url = input.value.trim();
+  if (!url) return;
+  images.push({ url, isMain: images.length === 0 });
+  input.value = "";
+  renderImages();
+});
+
+function renderImages() {
+  const grid = document.getElementById("imagesGrid");
+  grid.innerHTML = images.map((img, i) => `
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="img-thumb ${img.isMain ? "is-main" : ""}" data-index="${i}">
+        <img src="${img.url}" alt="Image produit ${i + 1}" onerror="this.style.opacity=0.2">
+        ${img.isMain ? '<span class="main-tag">Principale</span>' : ""}
+        <button type="button" class="thumb-remove" data-remove="${i}" title="Supprimer">✕</button>
+      </div>
+    </div>`).join("") || `<div class="col-12"><p class="text-muted small mb-0">Aucune image ajoutée pour l'instant.</p></div>`;
+
+  grid.querySelectorAll(".img-thumb").forEach(el => {
+    el.addEventListener("click", (e) => {
+      if (e.target.closest(".thumb-remove")) return;
+      const idx = Number(el.dataset.index);
+      images = images.map((img, i) => ({ ...img, isMain: i === idx }));
+      renderImages();
+    });
+  });
+  grid.querySelectorAll(".thumb-remove").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const idx = Number(btn.dataset.remove);
+      const wasMain = images[idx].isMain;
+      images.splice(idx, 1);
+      if (wasMain && images.length) images[0].isMain = true;
+      renderImages();
+    });
+  });
+}
+renderImages();
+
+requireAuth(async () => {
+  if (editId) {
+    document.getElementById("formTitle").textContent = "Modifier le produit";
+    document.getElementById("submitBtnText").textContent = "Mettre à jour le produit";
+    const p = await fetchProductByIdAdmin(editId);
+    if (!p) {
+      toast("Produit introuvable.", "error");
+      window.location.href = "produits.html";
+      return;
+    }
+    document.getElementById("name").value = p.name || "";
+    document.getElementById("categoryId").value = p.categoryId || "";
+    document.getElementById("reference").value = p.reference || "";
+    document.getElementById("color").value = p.color || "";
+    document.getElementById("price").value = p.price ?? "";
+    document.getElementById("oldPrice").value = p.oldPrice ?? "";
+    document.getElementById("stock").value = p.stock ?? 0;
+    document.getElementById("availability").checked = p.availability !== false;
+    document.getElementById("featured").checked = !!p.featured;
+    document.getElementById("isNew").checked = !!p.isNew;
+    document.getElementById("promo").checked = !!p.promo;
+    images = Array.isArray(p.images) ? p.images.map(i => ({ ...i })) : [];
+    if (images.length && !images.some(i => i.isMain)) images[0].isMain = true;
+    renderImages();
+  }
+});
+
+document.getElementById("productForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorBox = document.getElementById("formError");
+  errorBox.style.display = "none";
+
+  const data = {
+    name: document.getElementById("name").value,
+    categoryId: document.getElementById("categoryId").value,
+    reference: document.getElementById("reference").value,
+    color: document.getElementById("color").value,
+    price: document.getElementById("price").value,
+    oldPrice: document.getElementById("oldPrice").value,
+    stock: document.getElementById("stock").value,
+    availability: document.getElementById("availability").checked,
+    featured: document.getElementById("featured").checked,
+    isNew: document.getElementById("isNew").checked,
+    promo: document.getElementById("promo").checked,
+    images
+  };
+
+  if (!data.name || !data.categoryId || !data.reference || !data.price) {
+    errorBox.textContent = "Merci de remplir tous les champs obligatoires (*).";
+    errorBox.style.display = "block";
+    return;
+  }
+
+  const btn = document.getElementById("submitBtn");
+  const btnText = document.getElementById("submitBtnText");
+  const spinner = document.getElementById("submitSpinner");
+  btn.disabled = true;
+  spinner.style.display = "inline-block";
+
+  try {
+    if (editId) {
+      await updateProduct(editId, data);
+      toast("Produit mis à jour avec succès.", "success");
+    } else {
+      await createProduct(data);
+      toast("Produit ajouté avec succès.", "success");
+    }
+    setTimeout(() => { window.location.href = "produits.html"; }, 700);
+  } catch (err) {
+    console.error(err);
+    errorBox.textContent = "Une erreur est survenue lors de l'enregistrement. Réessayez.";
+    errorBox.style.display = "block";
+    btn.disabled = false;
+    spinner.style.display = "none";
+  }
+});
+</script>
+</body>
+</html>
