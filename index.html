@@ -445,8 +445,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
         <h1>La belle vaisselle <em>d'ici</em>, pour une table qui vous ressemble.</h1>
         <p class="lead">Assiettes, verres, marmites, ustensiles de cuisine et décoration de table sélectionnés avec soin. Pas de panier, pas de paiement en ligne compliqué : vous choisissez, vous commandez sur WhatsApp.</p>
         <div class="d-flex flex-wrap gap-3">
-          <a href="pages/boutiques.html" class="btn-sv-primary">Découvrir la boutique <i class="fa-solid fa-arrow-right ms-1"></i></a>
-          <a href="pages/categories.html" class="btn-sv-outline">Voir les catégories</a>
+          <a href="boutique.html" class="btn-sv-primary">Découvrir la boutique <i class="fa-solid fa-arrow-right ms-1"></i></a>
+          <a href="c.html" class="btn-sv-outline">Voir les catégories</a>
         </div>
         <div class="sv-hero-stats">
           <div><div class="stat-num">18</div><div class="stat-label">catégories</div></div>
@@ -466,7 +466,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
         <span class="sv-eyebrow">Explorer</span>
         <h2>Nos catégories</h2>
       </div>
-      <a href="pages/categorie.html" class="btn-sv-outline">Toutes les catégories</a>
+      <a href="c.html" class="btn-sv-outline">Toutes les catégories</a>
     </div>
     <div class="row g-3" id="home-categories"></div>
   </div>
@@ -480,7 +480,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
         <span class="sv-eyebrow">Sélection</span>
         <h2>Produits vedettes</h2>
       </div>
-      <a href="pages/boutiques.html" class="btn-sv-outline">Voir toute la boutique</a>
+      <a href="pages/boutique.html" class="btn-sv-outline">Voir toute la boutique</a>
     </div>
     <div class="row g-4" id="home-featured"></div>
   </div>
@@ -494,7 +494,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
         <span class="sv-eyebrow">Fraîchement arrivé</span>
         <h2>Nouveautés</h2>
       </div>
-      <a href="pages/nouveaute.html" class="btn-sv-outline">Toutes les nouveautés</a>
+      <a href="pages/nouveautes.html" class="btn-sv-outline">Toutes les nouveautés</a>
     </div>
     <div class="row g-4" id="home-new"></div>
   </div>
@@ -562,5 +562,50 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 <script>window.SV_BASE = ""; window.SV_PAGE = "accueil";</script>
 <script type="module" src="js/components.js"></script>
 <script type="module" src="js/main.js"></script>
+<script type="module">
+import { fetchProducts, renderProductCard, renderSkeletonCards, renderEmptyState, renderErrorState } from "./js/products.js";
+import { fetchCategories } from "./js/categories.js";
+
+function renderCategoryCard(c) {
+  return `
+  <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up">
+    <a href="pages/boutique.html?categorie=${c.id}" class="cat-card d-block">
+      <div class="cat-icon"><i class="${c.icon}"></i></div>
+      <h3>${c.name}</h3>
+    </a>
+  </div>`;
+}
+
+async function loadHome() {
+  const catGrid = document.getElementById("home-categories");
+  const featuredGrid = document.getElementById("home-featured");
+  const newGrid = document.getElementById("home-new");
+  const promoGrid = document.getElementById("home-promo");
+
+  featuredGrid.innerHTML = renderSkeletonCards(4);
+  newGrid.innerHTML = renderSkeletonCards(4);
+  promoGrid.innerHTML = renderSkeletonCards(4);
+
+  const categories = await fetchCategories();
+  catGrid.innerHTML = categories.slice(0, 12).map(renderCategoryCard).join("");
+
+  const [featured, nouveautes, promos] = await Promise.all([
+    fetchProducts({ featured: true, max: 4 }),
+    fetchProducts({ isNew: true, max: 4 }),
+    fetchProducts({ promo: true, max: 4 }),
+  ]);
+
+  featuredGrid.innerHTML = featured === null ? renderErrorState()
+    : (featured.length ? featured.map(renderProductCard).join("") : renderEmptyState("Aucun produit vedette pour le moment."));
+
+  newGrid.innerHTML = nouveautes === null ? renderErrorState()
+    : (nouveautes.length ? nouveautes.map(renderProductCard).join("") : renderEmptyState("Aucune nouveauté pour le moment."));
+
+  promoGrid.innerHTML = promos === null ? renderErrorState()
+    : (promos.length ? promos.map(renderProductCard).join("") : renderEmptyState("Aucune promotion en ce moment."));
+}
+
+loadHome();
+</script>
 </body>
 </html>
