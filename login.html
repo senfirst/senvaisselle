@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion administrateur | Sen Vaisselle</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="auth-shell">
+  <div class="auth-card" data-aos="fade-up">
+    <div class="text-center mb-4">
+      <span class="plate-mark d-inline-block mb-3" style="width:48px;height:48px;"></span>
+      <h1 class="font-display" style="font-size:1.6rem;color:var(--navy);margin-bottom:4px;">Espace administrateur</h1>
+      <p class="text-muted small mb-0">Connectez-vous pour gérer les produits Sen Vaisselle.</p>
+    </div>
+
+    <form id="loginForm" novalidate>
+      <div class="mb-3">
+        <label for="email" class="form-label small fw-semibold">Adresse e-mail</label>
+        <input type="email" id="email" class="form-control form-control-sv" autocomplete="username" required>
+      </div>
+      <div class="mb-2">
+        <label for="password" class="form-label small fw-semibold">Mot de passe</label>
+        <div class="position-relative">
+          <input type="password" id="password" class="form-control form-control-sv pe-5" autocomplete="current-password" required>
+          <button type="button" id="togglePw" class="btn position-absolute" style="right:4px;top:2px;color:var(--ink-soft);" aria-label="Afficher le mot de passe">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <div id="loginError" class="text-danger small mb-3" style="display:none;"></div>
+      <button type="submit" id="loginBtn" class="btn-sv-primary w-100 justify-content-center d-flex align-items-center gap-2">
+        <span id="loginBtnText">Se connecter</span>
+        <i class="fa-solid fa-spinner fa-spin" id="loginSpinner" style="display:none;"></i>
+      </button>
+    </form>
+
+    <div class="text-center mt-4">
+      <a href="../index.html" class="small text-muted"><i class="fa-solid fa-arrow-left me-1"></i>Retour à la boutique</a>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { loginAdmin, redirectIfAuthenticated, friendlyAuthError } from "../js/admin-auth.js";
+
+redirectIfAuthenticated();
+
+const form = document.getElementById("loginForm");
+const errorBox = document.getElementById("loginError");
+const btn = document.getElementById("loginBtn");
+const btnText = document.getElementById("loginBtnText");
+const spinner = document.getElementById("loginSpinner");
+
+document.getElementById("togglePw").addEventListener("click", (e) => {
+  const input = document.getElementById("password");
+  const icon = e.currentTarget.querySelector("i");
+  const show = input.type === "password";
+  input.type = show ? "text" : "password";
+  icon.className = show ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
+});
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  errorBox.style.display = "none";
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  btn.disabled = true;
+  btnText.textContent = "Connexion...";
+  spinner.style.display = "inline-block";
+
+  try {
+    await loginAdmin(email, password);
+    window.location.href = "dashboard.html";
+  } catch (err) {
+    errorBox.textContent = friendlyAuthError(err.code);
+    errorBox.style.display = "block";
+    btn.disabled = false;
+    btnText.textContent = "Se connecter";
+    spinner.style.display = "none";
+  }
+});
+</script>
+</body>
+</html>
