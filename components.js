@@ -3,6 +3,7 @@
 // window.SV_BASE doit être défini AVANT ce script : chemin relatif vers la racine
 // window.SV_PAGE (optionnel) : identifiant de la page active pour le menu
 // ============================================================
+
 import { buildWhatsAppGenericLink } from "./utils.js";
 
 const BASE = window.SV_BASE ?? "";
