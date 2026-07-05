@@ -3,7 +3,7 @@
 // ============================================================
 import { db } from "./firebase-config.js";
 import {
-  collection, getDocs, query, where, orderBy, limit as fbLimit
+  collection, getDocs, doc, getDoc, query, where, orderBy, limit as fbLimit
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import {
   formatPrice, computeDiscount, buildWhatsAppLink, escapeText, sanitize, debounce
@@ -29,6 +29,18 @@ export async function fetchProducts({ categoryId, featured, promo, isNew, max } 
   } catch (err) {
     console.error("Erreur de chargement des produits :", err);
     return null; // null = erreur (ex: config Firebase manquante) ; [] = simplement vide
+  }
+}
+
+/** Récupère un seul produit par son ID Firestore (page détail produit) */
+export async function fetchProductById(id) {
+  try {
+    const snap = await getDoc(doc(db, PRODUCTS_COL, id));
+    if (!snap.exists()) return null;
+    return { id: snap.id, ...snap.data() };
+  } catch (err) {
+    console.error("Erreur de chargement du produit :", err);
+    return null;
   }
 }
 
